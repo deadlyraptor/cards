@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load core_tags %}
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <h1 class="title">${{ request.GET.amount }}</h1>
+        <h2 class="subtitle">{{ request.GET.category }}</h2>
+        <div class="columns">
+            <div class="column">
+                <table class="table is-striped">
+                    <thead>
+                        <tr>
+                            <th>Card</th>
+                            <th class="has-text-right">Base Rate</th>
+                            <th class="has-text-right">Cashback</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for card in cards %}
+                        <tr>
+                            <td>
+                                {{ card.name }}
+                            </td>
+                            <td class="has-text-right">
+                                {{ card.base_rate|floatformat:"-1g" }}
+                            </td>
+                            <td class="has-text-right">
+                                ${% base_cashback card request.GET.amount %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="column">
+                <div class="box">
+                    <div class="content">
+                        <h1 class="title">Rewards+ Takeaways</h1>
+                        <dl>
+                            <dt class="has-text-weight-bold is-italic">Gas</dt>
+                            <dd>Rewards+ (2x + rounding) over Double Cash (2x)</dd>
+
+                            <dt class="has-text-weight-bold is-italic">Groceries</dt>
+                            <dd>Rewards+ (2x + rounding) over Custom Cash (5x) only when spend is under $1.</dd>
+
+                            <dt class="has-text-weight-bold is-italic">Dining</dt>
+                            <dd>Rewards+ (5x + rounding) over Custom Cash (5x) or SavorOne (3%)
+                                <br>
+                                <span class="has-text-danger is-italic">Only valid for 1st year!</span>
+                            </dd>
+
+                            <dt class="has-text-weight-bold is-italic">Non-specific</dt>
+                            <dd>Rewards+ (1x + rounding) is only useful against another card with a category bonus if
+                                the spend is under a small number, e.g. online spend under $3.
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="columns is-multiline">
+            {% for card in cards %}
+            {% if card.name == 'Double Cash' or card.name == 'QuickSilver' %}
+            {% else %}
+            <div class="column is-half">
+                <div class="box">
+                    <p class="has-text-weight-bold">{{ card.name }}</p>
+                    <ul>
+                        {% for category in card.category.all %}
+                        {% if request.GET.category == category.get_category_display %}
+                        <li>{{ category.get_category_display }} - {{ category.rate|floatformat }} yields
+                            <span class="has-text-weight-bold">
+                                ${% category_cashback card category request.GET.amount %}
+                            </span>
+                        </li>
+                        {% else %}
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock content %}

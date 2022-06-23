@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="section">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-narrow">
+                <form class="box" action="{% url 'expense-result' %}" method="GET">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label for="{{ form.amount.id_for_label }}" class="label">{{ form.amount.label }}</label>
+                        <div class="control">
+                            {{ form.amount }}
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="{{ form.category.id_for_label }}" class="label">{{ form.category.label }}</label>
+                        <div class="control">
+                            <div class="select">
+                                {{ form.category }}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="button is-primary" type="submit">Calculate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock content %}
